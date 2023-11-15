@@ -5,7 +5,7 @@ namespace LoginServer
 {
     public class DebugSetup
     {
-        internal static void Setup()
+        public static void Setup()
         {
             UserDto account = new UserDto();
             account.Username = "misha";
