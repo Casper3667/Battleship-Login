@@ -5,10 +5,15 @@ namespace LoginServer.Services
 {
     public class UserInteraction : DbContext
     {
+        public UserInteraction(DbContextOptions<UserInteraction> options) : base(options)
+        {
+        }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlite("Data Source = User.db");
+            //optionsBuilder.UseSqlite("Data Source = User.db");
         }
 
         public DbSet<User> UserInfo { get; set; }

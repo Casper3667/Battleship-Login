@@ -66,7 +66,7 @@ namespace LoginServer.Controllers
         //}
 
         // GET: api/Users/{username}/{password}
-        [HttpGet("{username}/{password}"), Authorize]
+        [HttpGet("{username}/{password}")]
         public async Task<ActionResult<User>> GetUserToken(string username, string password)
         {
             if (_context.UserInfo == null)
