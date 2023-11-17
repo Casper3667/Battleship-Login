@@ -12,8 +12,17 @@ namespace LoginServer.Services
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //base.OnConfiguring(optionsBuilder);
-            //optionsBuilder.UseSqlite("Data Source = User.db");
+            if (!IsUnitTest())
+                optionsBuilder.UseSqlite("Data Source = User.db");
+        }
+
+        private bool IsUnitTest()
+        {
+            bool value = AppDomain.CurrentDomain.GetAssemblies()?
+                .Any(a => a.FullName != null && a.FullName.ToLowerInvariant()
+                .StartsWith("nunit.framework")) ?? false;
+
+            return value;
         }
 
         public DbSet<User> UserInfo { get; set; }
