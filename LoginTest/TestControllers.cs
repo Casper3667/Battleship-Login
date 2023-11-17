@@ -14,7 +14,7 @@ namespace LoginTest
     internal class TestControllers
     {
         [Test]
-        public async Task GetUserToken_ValidCredentials_ReturnsOkObjectResult()
+        public async Task Test_GetUserToken()
         {
             // Sets up the usage of an in-memory DB rather than any sort of SQL.
             var dbContextOptions = new DbContextOptionsBuilder<UserInteraction>()
