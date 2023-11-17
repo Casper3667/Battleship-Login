@@ -7,13 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoginTest
 {
@@ -22,27 +16,32 @@ namespace LoginTest
         [Test]
         public async Task GetUserToken_ValidCredentials_ReturnsOkObjectResult()
         {
-            // Arrange
+            // Sets up the usage of an in-memory DB rather than any sort of SQL.
             var dbContextOptions = new DbContextOptionsBuilder<UserInteraction>()
                 .UseInMemoryDatabase(databaseName: "InMemoryDatabase")
                 .Options;
 
+            // Generates a mock IConfiguration for the token key.
             var mockConfiguration = new Mock<IConfiguration>();
-            mockConfiguration.Setup(x => x.GetSection("AppSettings:Token").Value).Returns("The secrets to make a token key is to do this");
+            mockConfiguration.Setup(x => x.GetSection("AppSettings:Token")
+                .Value).Returns("A longer key used in testing this random stuff");
 
+            // Checks if a DB exists and ensures it is populated with the test user.
             using (var context = new UserInteraction(dbContextOptions))
             {
                 context.Database.EnsureCreated();
 
-                var testUser = new User { Username = "testuser", PasswordHash = "testpasswordhash" };
+                var testUser = new User { Username = "TestUser", PasswordHash = "123" };
                 context.UserInfo.Add(testUser);
                 context.SaveChanges();
             }
 
+            // Sets up the user with the in-memory DB.
             var serviceProvider = new ServiceCollection()
                 .AddDbContext<UserInteraction>(options => options.UseInMemoryDatabase("InMemoryDatabase"))
                 .BuildServiceProvider();
 
+            // Generates a few more controller mocks for testing.
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             var mockControllerContext = new ControllerContext
             {
@@ -54,10 +53,10 @@ namespace LoginTest
                 ControllerContext = mockControllerContext
             };
 
-            // Act
-            var result = await userController.GetUserToken("testuser", "testpasswordhash");
+            // Tests if it is possible to get the user's token.
+            var result = await userController.GetUserToken("TestUser", "123");
 
-            // Assert
+            // Check that we do, in fact, get the user's token.
             Assert.IsInstanceOf<OkObjectResult>(result.Result);
         }
     }

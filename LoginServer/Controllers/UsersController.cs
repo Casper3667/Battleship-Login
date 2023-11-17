@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using LoginManager.Models;
+using LoginServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using LoginManager.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using LoginServer.Services;
-using Microsoft.AspNetCore.Authorization;
 
 namespace LoginServer.Controllers
 {
@@ -40,7 +34,7 @@ namespace LoginServer.Controllers
             var userDTOList = userList.Select(User => new UserDto
             {
                 Username = User.Username,
-                PasswordHash = User.PasswordHash
+                EncryptionHash = User.AccountCreation.GetHashCode().ToString()
             }).ToList();
 
             return userDTOList;
@@ -77,12 +71,12 @@ namespace LoginServer.Controllers
 
             if (user == null)
                 return NotFound("User not found.");
-            else if(user.Username == username && user.PasswordHash == password)
+            else if (user.Username == username && user.PasswordHash == password)
             {
                 string token = CreateToken(user); //CreateToken(account);
                 return Ok(token);
             }
-            else if(user.PasswordHash != password)
+            else if (user.PasswordHash != password)
                 return NotFound("Wrong password.");
             else
                 return NotFound("Unspecified error.");
@@ -126,14 +120,14 @@ namespace LoginServer.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(UserDto user)
         {
-          if (_context.UserInfo == null)
-          {
-              return Problem("Entity set 'UserInteraction.UserInfo'  is null.");
-          }
-            User newUser = new User()
+            if (_context.UserInfo == null)
+            {
+                return Problem("Entity set 'UserInteraction.UserInfo'  is null.");
+            }
+            User newUser = new()
             {
                 Username = user.Username,
-                PasswordHash = user.PasswordHash
+                PasswordHash = user.EncryptionHash
             };
             _context.UserInfo.Add(newUser);
             await _context.SaveChangesAsync();
@@ -169,7 +163,7 @@ namespace LoginServer.Controllers
 
         internal string CreateToken(User user)
         {
-            List<Claim> claims = new List<Claim>
+            List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.Name, user.Username)
             };

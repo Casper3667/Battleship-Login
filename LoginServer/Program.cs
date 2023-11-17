@@ -1,7 +1,6 @@
 using LoginServer.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-LoginServer.LoginStart.StartSequence(args);
+LoginServer.LoginStart.StartSequence(args); // Not entirely necessary but just to be safe it is done this way.
 namespace LoginServer
 {
     public static class LoginStart
@@ -48,4 +47,3 @@ namespace LoginServer
         }
     }
 }
-    
