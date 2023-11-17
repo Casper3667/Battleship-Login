@@ -73,7 +73,9 @@ namespace LoginServer.Controllers
                 return NotFound("User not found.");
             else if (user.Username == username && user.PasswordHash == password)
             {
-                string token = CreateToken(user); //CreateToken(account);
+                UserDto userDTO = new(user.Username, user.AccountCreation.GetHashCode().ToString());
+
+                string token = CreateToken(userDTO); //CreateToken(account);
                 return Ok(token);
             }
             else if (user.PasswordHash != password)
@@ -161,7 +163,7 @@ namespace LoginServer.Controllers
             return (_context.UserInfo?.Any(e => e.Username == id)).GetValueOrDefault();
         }
 
-        internal string CreateToken(User user)
+        internal string CreateToken(UserDto user)
         {
             List<Claim> claims = new()
             {
