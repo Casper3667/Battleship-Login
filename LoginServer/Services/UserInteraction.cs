@@ -32,8 +32,9 @@ namespace LoginServer.Services
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().Property(c => c.Username).ValueGeneratedOnAdd();
             modelBuilder.Entity<User>().HasData(
-                new User() { Username = "Misha", PasswordHash = "123" },
-                new User() { Username = "Tester", PasswordHash = "Supertest" }
+                new User() { Username = "Misha", PasswordHash = "123" ,AccountCreation=DateTime.Now},
+                new User() { Username = "Tester", PasswordHash = "Supertest", AccountCreation = DateTime.Now },
+                new User() { Username = "Username", PasswordHash = "DC647EB65E6711E155375218212B3964", AccountCreation = DateTime.Now } // The Password Hash is the hash you get from: Password (Case sensitive)
                 );
         }
     }
